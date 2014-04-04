@@ -1,0 +1,40 @@
+<!doctype html> 
+<html lang="en"> 
+    <head>
+        <title>COMSC Robot</title>
+        <link href='http://fonts.googleapis.com/css?family=Share+Tech+Mono' rel='stylesheet' type='text/css'>
+        <link href="/static/css/main.css" type="text/css" rel="stylesheet" /> 
+    </head>
+    <body>
+        <div id="loading"></div>
+        <header>
+            <div id="logo"></div>
+            <div id="cs_text">Cardiff School of<br /><span>Computer Science &amp; Informatics</span><br /><br /><span class="robotathon">robotathon</span></div>
+            
+            {% if user != None %}
+                <nav>
+                    <a href="/">dashboard</a>
+                    <a href="/logout">logout</a>
+                </nav>
+            {% endif %}
+
+            <div class="clear"></div>
+        </header>
+        {% block body %}
+        {% endblock %}
+    </body>
+    
+    <script src="/static/js/jquery.min.js"></script>
+    <script src="/static/js/jquery.ui.widget.js"></script>
+    <script src="/static/js/jquery.fileupload.js"></script>
+    <script>
+        function show_loading(){
+            $("#loading").stop().fadeIn();
+        }
+        function hide_loading(){
+            $("#loading").stop().fadeOut();
+        }
+    </script>
+    {% block scripts %}
+    {% endblock %}
+</html>

@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+{% block body %}
+<section>
+    <h1>Source for robot '{{ robot['robot_name'] }}'</h1>
+
+    <textarea class="source" readonly>{{ source }}</textarea>
+
+</section>
+{% endblock %}
+{% block scripts %}
+<script>
+</script>
+{% endblock %}
+

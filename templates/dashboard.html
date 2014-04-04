@@ -1,0 +1,79 @@
+{% extends "layout.html" %}
+{% block body %}
+
+<section>
+    <h1>Welcome, {{user.username}}</h1>
+
+    <h2>Create robot</h2>
+    <p>Choose a robot Python file to upload.</p>
+    <p><span class="info">The name of your robot will be the same as the filename. For example, the file 'fred.py' will produce a robot called 'fred'.</span></p>
+    <button id="new_robot" class="add">Add robot</button>
+    <form enctype="multipart/form-data" class="hidden">
+        <input name="robot_file" type="file" class="hidden" id="robot_file" />
+    </form> 
+
+    <h2>Your robots</h2>
+    {% if robot_count == 0 %}
+        <p><span class="info">You don't have any robots yet!</span></p>   
+    {% else %}
+        <ul class="robot_list">
+        {% for robot in robots %}
+            <li>
+                <p class="title">{{ robot['robot_name'] }}</p>
+                <button onclick="window.location='/delete_robot?id={{ robot['robot_id'] }}';" class="delete">delete</button>
+                <button onclick="window.location='/robot_source?id={{ robot['robot_id'] }}';" class="source">source</button>
+                <button onclick="window.location='/battle?id1={{ robot['robot_id'] }}&id2={{ robot['robot_id'] }}';" class="battle">test</button>
+
+            </li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+ 
+{% endblock %}
+{% block scripts %}
+<script>
+    $(document).ready(function(){
+    });
+    $("#new_robot").click(function(event){
+        event.stopImmediatePropagation();
+        $("#robot_file").trigger("click");
+    });
+    //$("#robot_file").on("change", function(){
+        $('#robot_file').fileupload({
+            url: '/upload_robot',
+            dataType: 'json',
+            done: function (e, data) {
+                window.location = "/";
+            },
+            progressall: function (e, data) {
+            }
+        }).prop('disabled', !$.support.fileInput)
+            .parent().addClass($.support.fileInput ? undefined : 'disabled'); 
+//    });
+    $("#login").click(function(event){
+       show_loading(); 
+        $.ajax({
+            type : 'POST',
+            url : '/login',
+            dataType : 'json',
+            data : {
+                email: $("#login_email").val(),
+                password: $("#login_password").val(),
+            },
+            success : function(data){
+                console.log(data);
+                if(data.error == false){
+                    window.location = "/";
+                }
+                else{
+                    hide_loading();
+                }
+            },
+            error : function(XMLHttpRequest, textStatus, errorThrown){
+                alert(errorThrown);
+            }
+         }); 
+    });
+</script>
+{% endblock %}
+

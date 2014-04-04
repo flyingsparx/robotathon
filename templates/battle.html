@@ -1,0 +1,128 @@
+{% extends "layout.html" %}
+{% block body %}
+<section>
+    <h1 class="centre">{{ result['robot1']['robot_name'] }} VS {{ result['robot2']['robot_name'] }} </h1>
+
+    <div class="vs_box">
+        <div class="robot robot1">
+            <p class="title">{{ result['robot1']['robot_name'] }}</p>    
+            <p class="owner">{{ user['username'] }}</p>
+            <p class="score">{{ result['scores'][0] }}</p>
+        </div>
+        <div class="robot robot2">
+            <p class="title">{{ result['robot1']['robot_name'] }}</p>
+            <p class="owner">{{ result['opposer']['username'] }}</p>
+            <p class="score">{{ result['scores'][1] }}</p>
+        </div>
+        <div class="clear"></div>
+    </div>
+   
+    <div class="centre"> 
+        <button id="step_back">&lt;</button>
+        <button id="play_pause">Play match</button>    
+        <button id="step_forward">&gt;</button>
+    </div>
+    <p style="text-align:center">Move <span id="move_count">0</span</p>
+    <div id="map"></div>
+
+    
+
+</section>
+{% endblock %}
+{% block scripts %}
+<script>
+{% autoescape false %}
+var map_data = {{ result['map'] }};
+var history = {{ result['history'] }};
+{% endautoescape %}
+
+var playing = false;
+var move = 0;
+
+    $(document).ready(function(){
+        create_map();
+    });
+
+    $('#play_pause').click(function(event){
+        event.stopImmediatePropagation();
+        if(playing == false){
+            move = 0;
+            playing = true;
+            iterate_move(move);
+            $("#play_pause").html('Playing...');
+        }
+    });    
+    
+    $("#step_back").click(function(event){
+        event.stopImmediatePropagation();
+        if(playing == true){return;}
+        if(move == 0){
+            move = 100;
+        }
+        move--;
+        show_move(move);
+        $("#move_count").html(move);
+    });
+    $("#step_forward").click(function(event){
+        event.stopImmediatePropagation();
+        if(playing == true){return;}
+        if(move == 100){
+            move = 0;
+        }
+        move++;
+        show_move(move);
+        $("#move_count").html(move);
+    });
+
+    function iterate_move(move){
+        move++;
+        setTimeout(function(){
+            show_move(move);
+            $("#move_count").html(move);
+            if(move < 100){
+                iterate_move(move);
+            }
+            else{
+                $("#play_pause").html('Replay');
+                playing = false;
+            }
+
+        }, 100);
+    }
+    
+    function create_map(){
+        var tile_size = 25;
+        var map = $("#map");
+        for(var i = 0; i < map_data.spawn.length; i++){
+            var sp = map_data.spawn[i];
+            var x = sp[0]*tile_size;
+            var y = sp[1]*tile_size;
+            map.append("<div class='spawn tile' style='top:"+y+"px;left:"+x+"px;'></div>")
+        }   
+        for(var i = 0; i < map_data.obstacle.length; i++){
+            var op = map_data.obstacle[i];
+            var x = op[0]*tile_size;
+            var y = op[1]*tile_size;
+            map.append("<div class='obstacle tile' style='top:"+y+"px;left:"+x+"px;'></div>")
+        }
+    }
+
+    function show_move(move){
+        var map = $("#map");
+        var tile_size = 25;
+        
+        var move_data = history[move];
+        $("#map .robot").remove();
+        for(var i = 0; i < move_data.length; i++){
+            var robot = move_data[i]; 
+            var x = robot.location[0]*tile_size;
+            var y = robot.location[1]*tile_size;
+            var player = "player1";
+            if(robot.player_id == 1){player = "player2";}
+            map.append("<div class='robot "+player+"' style='top:"+y+"px;left:"+x+"px;'>"+robot.hp+"</div>");
+        }
+        console.log(move_data);
+    }
+</script>
+{% endblock %}
+

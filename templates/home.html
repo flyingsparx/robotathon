@@ -1,0 +1,83 @@
+{% extends "layout.html" %}
+{% block body %}
+
+<section>
+    <h1></h1>
+    <p>Welcome to the COMSC robot competition.</p>
+    <div class="half">
+        <h2>Register</h2>
+        <p>Use your Cardiff university email to register.</p>
+        <input id="register_email" type="email" placeholder="email" /><br />
+        <input id="register_username" type="text" placeholder="choose a username"  class="username"/><br />
+        <input id="register_password1" type="password" placeholder="password" /><br />
+        <input id="register_password2" type="password" placeholder="password confirm" /><br />
+        <button id="register">Register</button>
+    </div>
+
+    <div class="half">
+        <h2>Login</h2>
+        <p>Use your registered email and password to login.</p>
+        <input id="login_email" type="email" placeholder="email" /><br />
+        <input id="login_password" type="password" placeholder="password" /><br />
+        <button id="login">Login</button>
+    </div>
+
+    <div class="clear"></div>
+{% endblock %}
+{% block scripts %}
+<script>
+    $(document).ready(function(){
+        console.log("hello");
+    });
+    $("#register").click(function(event){
+       show_loading(); 
+        $.ajax({
+            type : 'POST',
+            url : '/register',
+            dataType : 'json',
+            data : {
+                email: $("#register_email").val(),
+                password1: $("#register_password1").val(),
+                password2: $("#register_password2").val(),
+                username: $("#register_username").val()
+            },
+            success : function(data){
+                if(data.error == false){
+                    window.location = "/";
+                }
+                else{
+                    hide_loading();
+                }
+            },
+            error : function(XMLHttpRequest, textStatus, errorThrown){
+                alert(errorThrown);
+            }
+         }); 
+    });
+    $("#login").click(function(event){
+       show_loading(); 
+        $.ajax({
+            type : 'POST',
+            url : '/login',
+            dataType : 'json',
+            data : {
+                email: $("#login_email").val(),
+                password: $("#login_password").val(),
+            },
+            success : function(data){
+                console.log(data);
+                if(data.error == false){
+                    window.location = "/";
+                }
+                else{
+                    hide_loading();
+                }
+            },
+            error : function(XMLHttpRequest, textStatus, errorThrown){
+                alert(errorThrown);
+            }
+         }); 
+    });
+</script>
+{% endblock %}
+
