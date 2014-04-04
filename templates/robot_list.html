@@ -1,0 +1,60 @@
+{% extends "layout.html" %}
+{% block body %}
+
+<section>
+    <h1>Battle a robot</h1>
+
+    <div class="half">
+        <h2>Choose your defender</h2>
+        {% if arsenal_count == 0 %}
+            <p class="info">You don't have any robots yet :(</p>   
+        {% else %}
+            <ul class="robot_list" id="arsenal">
+            {% for robot in arsenal %}
+                <li data-id="{{ robot['robot_id'] }}">
+                    <p class="title">{{ robot['robot_name'] }}</p>
+                </li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+
+
+    </div>
+
+    <div class="half">
+        <h2>Robots available to fight</h2>
+        {% if robot_count == 0 %}
+            <p class="info">No robots available to fight :(</p>   
+        {% else %}
+            <ul class="robot_list">
+            {% for robot in robots %}
+                <li>
+                    <p class="title">{{ robot['robot_name'] }}</p>
+                    <button data-id="{{ robot['robot_id'] }}" class="begin_battle battle">fight this robot</button>
+                </li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+
+    <div class="clear"></div>
+ 
+{% endblock %}
+{% block scripts %}
+<script>
+    $(document).ready(function(){
+        $("#arsenal li:first-child").addClass("selected");
+        $("#arsenal li").click(function(){
+            $("#arsenal li").removeClass("selected");
+            $(this).addClass("selected");
+        });
+        $(".begin_battle").click(function(event){
+            event.stopImmediatePropagation();
+            var selected_robot = $("#arsenal li.selected").attr("data-id");
+            var opponent = $(this).attr("data-id");
+            window.location = "/battle?id1="+selected_robot+"&id2="+opponent;            
+        });
+    });
+</script>
+{% endblock %}
+

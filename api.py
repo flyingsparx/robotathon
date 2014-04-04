@@ -88,6 +88,10 @@ def delete_robot(user, robot_id):
     result['error'] = False
     return result
 
+def get_all_robots(user):
+    robots = db_manager.get_all_robots(user)
+    return robots 
+
 def get_robot_source(user, robot_id):
     result = {}
     robot = db_manager.get_robot_by_id(robot_id)
@@ -108,7 +112,7 @@ def get_robot_source(user, robot_id):
 def battle(robot1_id, robot2_id):
     result = {}
     robot1 = db_manager.get_robot_by_id(robot1_id)
-    robot2 = db_manager.get_robot_by_id(robot1_id)
+    robot2 = db_manager.get_robot_by_id(robot2_id)
     if robot1 == None or robot2 == None:
         result['error'] = True
         result['messgae'] = 'There is an invalid robot.'

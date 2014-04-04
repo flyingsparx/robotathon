@@ -38,7 +38,7 @@ def home():
         print robots
         return render_template('dashboard.html', user = user, robots = robots, robot_count = len(robots))
     else:
-        return render_template('home.html')
+        return render_template('home.html', user=None)
  
 @app.route('/register', methods=['POST'])
 def register():
@@ -98,6 +98,15 @@ def view_robot_source():
         id = request.args.get('id')
         result = api.get_robot_source(user, id)
         return render_template('source.html', robot = result['robot'], source = result['source'])
+
+@app.route('/find_battle')
+def find_battle():
+    if validate_session():
+        arsenal = db_manager.get_robots_of_user(user['id'])
+        robots = db_manager.get_all_robots(user['id'])
+        return render_template('robot_list.html', arsenal = arsenal, robots = robots, user = user, robot_count = len(robots), arsenal_count = len(arsenal))
+    else:
+        return redirect(url_for('home'), user = None)
 
 @app.route('/battle')
 def battle():

@@ -117,6 +117,18 @@ button.source{
     background-size:18px;
     background-position:4px center;
 }
+button.test{
+    padding-left:30px;
+    background-image: url('/static/media/test.png');
+    background-repeat:no-repeat;
+    background-size:18px;
+    background-position:4px center;
+}
+button.battle{
+    background-color:rgb(0,100,0);
+    font-size:22px;
+    margin-left:20px;
+}
 
 h1{
     font-weight:100;
@@ -225,6 +237,10 @@ ul.robot_list li{
     padding-left: 120px;
     min-height: 100px;
 }
+ul.robot_list li.selected{
+    background-color:rgba(0,100,0,0.8);
+    color:white;
+}
 ul.robot_list li .title{
     font-family: 'Share Tech Mono' ;
 }
@@ -237,19 +253,14 @@ ul.robot_list li .title{
     padding:0px;
     background-size:100px;
     background-repeat:no-repeat;
-    background-position:left center;
+    background-position:10px center;
     background-image:url('/static/media/robot.png');
     min-height:100px;
-}
-.vs_box .robot1{
-    padding-left: 120px;
-    float:left;
-}
-.vs_box .robot2{
-   float:right; 
-   background-position:right center;
-   padding-right:120px;
-   text-align:right;
+    display:block;
+    margin:20px auto;
+    padding:10px;
+    padding-left:130px;
+    background-color:rgba(0,0,0,0.1);
 }
 .vs_box .robot .title{
     font-family: 'Share Tech Mono' ;
@@ -266,11 +277,12 @@ ul.robot_list li .title{
     font-size:60px;
     font-weight:300;
     margin:0px;
-    color:rgb(100,100,100);
+    color:red;
 }
-.vs_box .robot.robot2 .score{
-    text-align:left;
+.vs_box .robot .score.player2{
+    color:blue;
 }
+
 
 #map{
     width:500px;
@@ -282,7 +294,7 @@ ul.robot_list li .title{
 #map .tile{
     width: 25px;
     height: 25px;
-    border:1px solid black;
+    border:1px solid rgba(0,0,0,0.7);
     position:absolute;
     z-index: 3;
 }

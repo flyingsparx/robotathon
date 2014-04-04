@@ -47,6 +47,12 @@ def get_robots_of_user(id):
     disconnect(con)
     return rows 
 
+def get_all_robots(user_id):
+    con,c = connect()
+    rows = c.execute("SELECT * FROM robot WHERE user_id != ?", [user_id]).fetchall()
+    disconnect(con)
+    return rows
+
 def get_robot_by_id(id):
     con, c = connect()
     row = c.execute("SELECT * FROM robot WHERE robot_id= ?", [id]).fetchone()
