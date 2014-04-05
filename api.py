@@ -167,6 +167,6 @@ def battle(user, robot1_id, robot2_id):
     result['opposer'] = opposer
     if result['error'] == False:
         timestamp = int(time.time())
-        battle_id = uuid.uuid4()
+        battle_id = str(uuid.uuid4())
         db_manager.store_battle(battle_id, user['id'], opposer['id'], robot1_id, robot2_id, timestamp, result['scores'][0], result['scores'][1], json.dumps(result['history']))
     return result

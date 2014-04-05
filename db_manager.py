@@ -18,14 +18,26 @@ def initalise():
     con.commit()
     disconnect(con)
 
+def get_battles_of_user(user_id):
+    con, c = connect()
+    rows = c.execute("""SELECT
+            user.username as username,
+            robot.robot_name as robot_name,
+            battle.score1 as score1,
+            battle.score2 as score2
+            FROM battle
+            LEFT JOIN robot ON battle.robot2_id=robot.robot_id
+            LEFT JOIN user ON battle.user2_id=user.id WHERE battle.user2_id=?""",[user_id]).fetchall();
+    disconnect(con)
+    return rows 
+
 def store_battle(battle_id, user1_id, user2_id, robot1_id, robot2_id, timestamp, score1, score2, history):
     con, c = connect()
     c.execute("INSERT INTO battle VALUES(?,?,?,?,?,?,?,?,?)", [battle_id, user1_id, user2_id, robot1_id, robot2_id, timestamp, score1, score2, history])
     con.commit()
     disconnect(con)
 
-def get_battles_of_user(user_id):
-    con, c = connect()
+
 
 def create_user(id, email, username, password):
     con, c = connect()
@@ -62,6 +74,8 @@ def get_all_robots(user_id):
     rows = c.execute("SELECT robot_name, robot_id, username FROM robot AS r JOIN user AS u ON r.user_id=u.id WHERE r.status=1 and r.user_id != ?", [user_id]).fetchall()
     disconnect(con)
     return rows
+
+
 
 def get_robot_by_id(id):
     con, c = connect()

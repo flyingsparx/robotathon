@@ -104,6 +104,8 @@ def view_arsenal(username):
         if arsenal == None:
             return redirect(url_for('home'))
         robots = db_manager.get_robots_of_user(arsenal['id'])
+        battles = db_manager.get_battles_of_user(arsenal['id'])
+        print battles
         return render_template('arsenal.html', arsenal=arsenal, robots=robots, robot_count = len(robots))
 
 @app.route('/find_battle')
