@@ -11,7 +11,7 @@
         <h2>Create robot</h2>
         <p>Choose a robot Python file to upload.</p>
         <button id="new_robot" class="add">Add robot</button>
-        <p class="info">The name of your robot will be the same as the filename. For example, the file 'fred.py' will produce a robot called 'fred'.</p>
+        <p class="info">The name of your robot will be the same as the filename. For example, the file 'fred.py' will produce a robot called 'fred'. Robot names need to be unique.</p>
         <form enctype="multipart/form-data" class="hidden">
             <input name="robot_file" type="file" class="hidden" id="robot_file" />
         </form> 
@@ -26,9 +26,19 @@
             {% for robot in robots %}
                 <li>
                     <p class="title">{{ robot['robot_name'] }}</p>
+                    {% if robot['status'] == 0 %}
+                        <p class="status untested">Not yet tested</p>
+                        <p class="info">Robots need to be tested to ensure that they will not cause errors when in battles.</p>
+                        <div class="alert"></div>
+                    {% elif robot['status'] == 1 %}
+                        <p class="status passed">Test passed</p>
+                    {% elif robot['status'] == -1 %}
+                        <p class="status failed">Test failed: invalid robot</p>
+                        <div class="alert"></div>
+                    {% endif %}
                     <button onclick="window.location='/delete_robot?id={{ robot['robot_id'] }}';" class="delete">delete</button>
                     <button onclick="window.location='/robot_source?id={{ robot['robot_id'] }}';" class="source">source</button>
-                    <button onclick="window.location='/battle?id1={{ robot['robot_id'] }}&id2={{ robot['robot_id'] }}';" class="test">test</button>
+                    <button onclick="window.location='/test?id={{ robot['robot_id'] }}';" class="test">test</button>
 
                 </li>
             {% endfor %}
@@ -40,48 +50,19 @@
 {% endblock %}
 {% block scripts %}
 <script>
-    $(document).ready(function(){
-    });
     $("#new_robot").click(function(event){
         event.stopImmediatePropagation();
         $("#robot_file").trigger("click");
     });
-    //$("#robot_file").on("change", function(){
-        $('#robot_file').fileupload({
-            url: '/upload_robot',
-            dataType: 'json',
-            done: function (e, data) {
-                window.location = "/";
-            },
-            progressall: function (e, data) {
-            }
-        }).prop('disabled', !$.support.fileInput)
-            .parent().addClass($.support.fileInput ? undefined : 'disabled'); 
-//    });
-    $("#login").click(function(event){
-       show_loading(); 
-        $.ajax({
-            type : 'POST',
-            url : '/login',
-            dataType : 'json',
-            data : {
-                email: $("#login_email").val(),
-                password: $("#login_password").val(),
-            },
-            success : function(data){
-                console.log(data);
-                if(data.error == false){
-                    window.location = "/";
-                }
-                else{
-                    hide_loading();
-                }
-            },
-            error : function(XMLHttpRequest, textStatus, errorThrown){
-                alert(errorThrown);
-            }
-         }); 
-    });
+    $('#robot_file').fileupload({
+        url: '/upload_robot',
+        dataType: 'json',
+        done: function (e, data) {
+            window.location = "/";
+        },
+        progressall: function (e, data) {
+        }
+    }).prop('disabled', !$.support.fileInput).parent().addClass($.support.fileInput ? undefined : 'disabled'); 
 </script>
 {% endblock %}
 

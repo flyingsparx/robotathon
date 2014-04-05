@@ -13,9 +13,19 @@ def initalise():
     print "Initialising database..."
     con, c = connect()
     c.execute("CREATE TABLE IF NOT EXISTS user (id TEXT, email TEXT, username TEXT, password TEXT)")
-    c.execute("CREATE TABLE IF NOT EXISTS robot (robot_id TEXT, user_id TEXT, robot_name TEXT, robot_file TEXT)")
+    c.execute("CREATE TABLE IF NOT EXISTS robot (robot_id TEXT, user_id TEXT, robot_name TEXT, robot_file TEXT, status NUMBER)")
+    c.execute("CREATE TABLE IF NOT EXISTS battle (battle_id TEXT, user1_id TEXT, user2_id TEXT, robot1_id TEXT, robot2_id TEXT, timestamp NUMBER, score1 NUMBER, score2 NUMBER, history TEXT)")
     con.commit()
     disconnect(con)
+
+def store_battle(battle_id, user1_id, user2_id, robot1_id, robot2_id, timestamp, score1, score2, history):
+    con, c = connect()
+    c.execute("INSERT INTO battle VALUES(?,?,?,?,?,?,?,?,?)", [battle_id, user1_id, user2_id, robot1_id, robot2_id, timestamp, score1, score2, history])
+    con.commit()
+    disconnect(con)
+
+def get_battles_of_user(user_id):
+    con, c = connect()
 
 def create_user(id, email, username, password):
     con, c = connect()
@@ -49,7 +59,7 @@ def get_robots_of_user(id):
 
 def get_all_robots(user_id):
     con,c = connect()
-    rows = c.execute("SELECT * FROM robot WHERE user_id != ?", [user_id]).fetchall()
+    rows = c.execute("SELECT robot_name, robot_id, username FROM robot AS r JOIN user AS u ON r.user_id=u.id WHERE r.status=1 and r.user_id != ?", [user_id]).fetchall()
     disconnect(con)
     return rows
 
@@ -79,9 +89,18 @@ def get_robot_owner(robot):
 
 def create_robot(robot_id, user_id, robot_name, robot_file):
     con, c = connect()
-    c.execute("INSERT INTO robot VALUES(?,?,?,?)", [robot_id, user_id, robot_name, robot_file])
+    c.execute("INSERT INTO robot VALUES(?,?,?,?,0)", [robot_id, user_id, robot_name, robot_file])
     con.commit()
     disconnect(con)
+
+def robot_tested(robot_id, status):
+    con, c = connect()
+    if status == True:
+        c.execute("UPDATE robot SET status = 1 WHERE robot_id = ?", [robot_id])
+    if status == False:
+        c.execute("UPDATE robot SET status = -1 WHERE robot_id = ?", [robot_id])
+    con.commit()
+    disconnect(con)    
 
 def delete_robot(robot_id):
     con, c = connect()

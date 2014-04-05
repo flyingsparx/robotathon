@@ -23,7 +23,6 @@ def validate_session():
     if session['token'] == None:
         return False
     id = session['token'][:-5]
-    print id
     global user
     user = db_manager.get_user_by_id(id)  
     if user == None:
@@ -35,7 +34,6 @@ def validate_session():
 def home():
     if validate_session():
         robots = db_manager.get_robots_of_user(user['id']) 
-        print robots
         return render_template('dashboard.html', user = user, robots = robots, robot_count = len(robots))
     else:
         return render_template('home.html', user=None)
@@ -74,7 +72,6 @@ def upload_robot():
         if file and allowed_file(file.filename):
             robot_name = file.filename.rsplit(".",1)[0]
             filename = user['id']+"_"+str(uuid.uuid4())+".py"
-            print filename
             file.save('./robots/'+filename)
             result = api.create_robot(user, robot_name, filename)
             return json.dumps(result)
@@ -99,6 +96,16 @@ def view_robot_source():
         result = api.get_robot_source(user, id)
         return render_template('source.html', robot = result['robot'], source = result['source'])
 
+@app.route('/arsenal/<username>')
+def view_arsenal(username):
+    print username
+    if validate_session():
+        arsenal = db_manager.get_user_by_username(username)
+        if arsenal == None:
+            return redirect(url_for('home'))
+        robots = db_manager.get_robots_of_user(arsenal['id'])
+        return render_template('arsenal.html', arsenal=arsenal, robots=robots, robot_count = len(robots))
+
 @app.route('/find_battle')
 def find_battle():
     if validate_session():
@@ -108,13 +115,20 @@ def find_battle():
     else:
         return redirect(url_for('home'), user = None)
 
+@app.route('/test')
+def test():
+    if validate_session():
+        robot_id = request.args.get('id')
+        result = api.test(robot_id)
+        return render_template('battle.html', result = result, user = user, test = True)
+
 @app.route('/battle')
 def battle():
     if validate_session():
         robot1_id = request.args.get('id1')
         robot2_id = request.args.get('id2')
-        result = api.battle(robot1_id, robot2_id)
-        return render_template('battle.html', result = result, user = user)        
+        result = api.battle(user, robot1_id, robot2_id)
+        return render_template('battle.html', result = result, user = user, test = False)        
 
 # Main code
 if __name__ == '__main__':

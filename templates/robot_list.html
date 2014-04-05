@@ -11,8 +11,18 @@
         {% else %}
             <ul class="robot_list" id="arsenal">
             {% for robot in arsenal %}
-                <li data-id="{{ robot['robot_id'] }}">
+                <li data-status="{{ robot['status'] }}" data-id="{{ robot['robot_id'] }}">
                     <p class="title">{{ robot['robot_name'] }}</p>
+                    {% if robot['status'] == 0 %}
+                        <p class="status untested">Not yet tested</p>
+                        <div class="alert"></div>
+                    {% elif robot['status'] == 1 %}
+                        <p class="status passed">Test passed</p>
+                    {% elif robot['status'] == -1 %}
+                        <p class="status failed">Test failed: invalid robot</p>
+                        <div class="alert">
+                    {% endif %}
+
                 </li>
             {% endfor %}
             </ul>
@@ -30,6 +40,7 @@
             {% for robot in robots %}
                 <li>
                     <p class="title">{{ robot['robot_name'] }}</p>
+                    <p class="username"><a href="/arsenal/{{ robot['username'] }}">{{ robot['username'] }}</a></p>
                     <button data-id="{{ robot['robot_id'] }}" class="begin_battle battle">fight this robot</button>
                 </li>
             {% endfor %}
@@ -43,14 +54,30 @@
 {% block scripts %}
 <script>
     $(document).ready(function(){
-        $("#arsenal li:first-child").addClass("selected");
+        var found = false;
+        $("#arsenal li").each(function(){
+            if($(this).attr("data-status") == 1){
+                if(found == false){
+                    $(this).addClass("selected");
+                    found = true;
+                }
+            }    
+        });
+        if(found == false){
+            alert("You do not have any valid robots!");
+        }
         $("#arsenal li").click(function(){
-            $("#arsenal li").removeClass("selected");
-            $(this).addClass("selected");
+            if($(this).attr("data-status") == 1){
+                $("#arsenal li").removeClass("selected");
+                $(this).addClass("selected");
+            }
         });
         $(".begin_battle").click(function(event){
             event.stopImmediatePropagation();
             var selected_robot = $("#arsenal li.selected").attr("data-id");
+            if(selected_robot == null){
+                return;
+            }
             var opponent = $(this).attr("data-id");
             window.location = "/battle?id1="+selected_robot+"&id2="+opponent;            
         });

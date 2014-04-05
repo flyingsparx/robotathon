@@ -71,8 +71,8 @@ input.username{
 textarea.source{
     display:block;
     margin:0px;
-    padding:10px;
-    width:90%;
+    padding:10px 2%;
+    width:96%;
     font-size:15px;
     font-family: 'Courier', 'Monospace';
     min-height:400px;
@@ -94,6 +94,16 @@ button{
 }
 button:hover{
     opacity:0.7;
+}
+button.battle_play{
+    width:100%; 
+    display:block;
+}
+button.battle_step{
+    width:46%;
+    margin:0px 1%;
+    padding:5px 1%;
+    display:inline-block;
 }
 button.delete{
     padding-left:30px;
@@ -125,18 +135,24 @@ button.test{
     background-position:4px center;
 }
 button.battle{
+    padding-left:30px;
+    background-image: url('/static/media/swords2.png');
+    background-repeat:no-repeat;
+    background-size:18px;
+    background-position:4px center;
     background-color:rgb(0,100,0);
-    font-size:22px;
     margin-left:20px;
 }
 
 h1{
     font-weight:100;
     font-size:35px;
+    color: rgba(0,0,0,0.5);
 }
 
 h2{
     font-weight:100;
+    color: #d4374a;
 }
 
 p{
@@ -146,13 +162,39 @@ p{
     background-image:url('/static/media/info.png');
     background-size:20px;
     background-repeat:no-repeat;
-    background-position:4px center;
+    background-position:4px 4px;
     padding:5px;
     padding-left:30px;
     background-color:rgba(100,100,100, 0.3);
     border-bottom:4px solid rgba(100,100,100,0.4);
 }
-
+p.error{
+    background-image:url('/static/media/error.png');
+    background-size:20px;
+    background-repeat:no-repeat;
+    background-position:4px center;
+    padding:5px;
+    padding-left:30px;
+    background-color:rgba(150,0,0, 0.3);
+    border-bottom:4px solid rgba(150,0,0,0.4);
+}
+p.status{
+    background-image:url('/static/media/flag.png');
+    background-size:20px;
+    background-repeat:no-repeat;
+    background-position:4px center;
+    padding:5px;
+    padding-left:30px;
+}
+p.status.untested{
+    color:rgba(255,128,0,1.0);
+}
+p.status.passed{
+    color:rgba(0,150,0,1.0);
+}
+p.status.failed{
+    color:rgba(200,0,0,1.0);
+}
 header{
     display:block;
     margin:0px 5%;
@@ -181,31 +223,45 @@ header #cs_text span.robotathon{
     font-size:25px;
     font-family: 'Share Tech Mono' ;
 }
-header nav{
-    float: right;
-    display: inline-block;
+nav{
+    width:80%;
+    margin:0px auto;
+    display:block;
     vertical-align:middle;
+    height:50px;
+    text-align:right;
 }
-header nav a:link{
+nav a:link{
+    height:50px;    
+    width:40px;
     display: inline-block;
     background: white;
-    padding: 6px;
-    margin:2px 10px;
+    margin:0px 10px;
     color: rgba(0,0,0,0.4);
     text-decoration:none;
-    border-radius:3px;
+    border-radius:3px 3px 0px 0px;
+    background-position:center center;
+    background-size:36px;
+    background-repeat:no-repeat;
 }
-header nav a:visited{
-    color: rgba(0,0,0,0.4);
+nav a.logout{
+    background-image:url('/static/media/logout.png');    
+    background-color:rgba(0,0,0,0.15);
 }
-header nav a:hover{
-    color: black;
+nav a.dashboard{
+    background-image:url('/static/media/home.png');
 }
-  
+nav a.battle{
+    background-image:url('/static/media/swords3.png');
+    background-size:25px;
+}
+nav a:hover{
+    background-color:rgba(0,0,0,0.1);
+}
 
 section{
    width: 80%;
-   margin: 30px auto;
+   margin: 0px auto;
    background: white;
    padding:15px;
    position:relative;
@@ -228,21 +284,43 @@ ul.robot_list li{
     padding-bottom:30px;
     padding-top:30px;
     border-bottom:1px dotted rgba(0,0,0,0.3);
-    margin:0px 10px;
+    margin:10px 0px;
     display:block;
     background-image:url('/static/media/robot.png');
     background-size:100px;
     background-repeat:no-repeat;
-    background-position:left center;
+    background-position:10px center;
+    background-color:rgba(0,0,0,0.1);
     padding-left: 120px;
+    padding-right:10px;
     min-height: 100px;
+    position:relative;
 }
 ul.robot_list li.selected{
     background-color:rgba(0,100,0,0.8);
     color:white;
 }
+ul.robot_list li .battle{
+    position:absolute;
+    top:0px;
+    right:8px;
+    font-size:14px;
+}
+ul.robot_list li .alert{
+    position:absolute;
+    top:-0px;
+    right:5px;
+    height:40px;
+    width:40px;
+    background-image:url('/static/media/alert.png');
+    background-size:cover;
+}
+ul.robot_list li.selected .status{
+    display:none;
+}
 ul.robot_list li .title{
     font-family: 'Share Tech Mono' ;
+    font-size:large;
 }
 
 .vs_box{
@@ -285,15 +363,13 @@ ul.robot_list li .title{
 
 
 #map{
-    width:500px;
-    height:500px;
     display:block;
     margin:20px auto;
     position:relative;
 }
 #map .tile{
-    width: 25px;
-    height: 25px;
+    width: 5%;
+    height: 5%;
     border:1px solid rgba(0,0,0,0.7);
     position:absolute;
     z-index: 3;
@@ -305,8 +381,8 @@ ul.robot_list li .title{
     background:rgb(150,150,150);
 }
 #map .robot{
-    width:25px;
-    height:25px;
+    width: 5%;
+    height: 5%;
     color:white;
     border-radius:50%;
     position:absolute;

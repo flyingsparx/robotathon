@@ -11,6 +11,7 @@
         <input id="register_username" type="text" placeholder="choose a username"  class="username"/><br />
         <input id="register_password1" type="password" placeholder="password" /><br />
         <input id="register_password2" type="password" placeholder="password confirm" /><br />
+        <p class="error hidden" id="register_error">Error</p>
         <button id="register">Register</button>
     </div>
 
@@ -19,6 +20,7 @@
         <p>Use your registered email and password to login.</p>
         <input id="login_email" type="email" placeholder="email" /><br />
         <input id="login_password" type="password" placeholder="password" /><br />
+        <p class="error hidden" id="login_error">Error</p>
         <button id="login">Login</button>
     </div>
 
@@ -30,6 +32,7 @@
         console.log("hello");
     });
     $("#register").click(function(event){
+        $("#register_error").addClass("hidden");
        show_loading(); 
         $.ajax({
             type : 'POST',
@@ -46,6 +49,8 @@
                     window.location = "/";
                 }
                 else{
+                    $("#register_error").html(data.message);
+                    $("#register_error").removeClass("hidden");
                     hide_loading();
                 }
             },
@@ -55,6 +60,7 @@
          }); 
     });
     $("#login").click(function(event){
+        $("#login_error").addClass("hidden");
        show_loading(); 
         $.ajax({
             type : 'POST',
@@ -71,6 +77,8 @@
                 }
                 else{
                     hide_loading();
+                    $("#login_error").html(data.message);
+                    $("#login_error").removeClass("hidden");
                 }
             },
             error : function(XMLHttpRequest, textStatus, errorThrown){

@@ -2,15 +2,28 @@
 {% block body %}
 <section>
     <div class="half">
-        <h1>Battle scorecard</h1>
-        {% if result['scores'][0] > result['scores'][1] %}
-            <p class="info">{{ result['robot1']['robot_name'] }} won the battle!</p>
-        {% elif result['scores'][1] > result['scores'][0] %}
-            <p class="info">{{ result['robot2']['robot_name'] }} won the battle!</p>
-        {% elif result['scores'][0] == result['scores'][1] %}
-            <p class="info">The robots drew this battle!</p>
+        {% if test == True %}
+            <h1>Test result</h1>
+            {% if result['error'] == False %}
+                <p class="status passed">{{ result['robot1']['robot_name'] }} tested with no problems.</p>
+            {% else %}
+                <p class="status failed">{{ result['robot1']['robot_name'] }} is not a valid robot.</p>
+                <p>Unfortunately your robot code is invalid. Ensure you follow the guidelines on importing the correct package and understand the functions your robot is allowed to call.</p></div>
+            {% endif %}
+        {% else %}
+            <h1>Battle scorecard</h1>
+            {% if result['error'] == True %}
+                <p class="error">There was an error with the battle. Ensure both robots have a 'passed' test statis.</p>
+            {% elif result['scores'][0] > result['scores'][1] %}
+                <p class="info">{{ result['robot1']['robot_name'] }} won the battle!</p>
+            {% elif result['scores'][1] > result['scores'][0] %}
+                <p class="info">{{ result['robot2']['robot_name'] }} won the battle!</p>
+            {% elif result['scores'][0] == result['scores'][1] %}
+                <p class="info">The robots drew this battle!</p>
+            {% endif %}
         {% endif %}
-        
+       
+        {% if result['error'] == False %} 
         <div class="vs_box">
             <div class="robot robot1">
                 <p class="title">{{ result['robot1']['robot_name'] }}</p>    
@@ -19,7 +32,11 @@
             </div>
             <div class="robot robot1">
                 <p class="title">{{ result['robot2']['robot_name'] }}</p>
-                <p class="owner">{{ result['opposer']['username'] }}</p>
+                {% if test == True %}
+                    <p class="owner">{{ user['username'] }} </p>
+                {% else %}
+                    <p class="owner">{{ result['opposer']['username'] }}</p>
+                {% endif %}
                 <p class="score player2">{{ result['scores'][1] }}</p>
             </div>
             <div class="clear"></div>
@@ -28,13 +45,16 @@
    
     <div class="half">
         <div class="centre"> 
-            <button id="step_back">&lt;</button>
-            <button id="play_pause">Play match</button>    
-            <button id="step_forward">&gt;</button>
+            <button id="play_pause" class="battle_play">Play match</button>    
+            <br />
+            <button id="step_back" class="battle_step">Previous move</button>
+            <button id="step_forward" class="battle_step">Next move</button>
         </div>
         <p style="text-align:center">Move <span id="move_count">0</span</p>
         <div id="map"></div>
     </div>
+    
+    {% endif %}
 
     <div class="clear"></div> 
 
@@ -52,6 +72,10 @@ var move = 0;
 
     $(document).ready(function(){
         create_map();
+        $("#map").css({'height':$("#map").width()});
+    });
+    $(window).resize(function(){
+        $("#map").css({'height':$("#map").width()});
     });
 
     $('#play_pause').click(function(event){
@@ -102,25 +126,25 @@ var move = 0;
     }
     
     function create_map(){
-        var tile_size = 25;
+        var tile_size = 5;
         var map = $("#map");
         for(var i = 0; i < map_data.spawn.length; i++){
             var sp = map_data.spawn[i];
             var x = sp[0]*tile_size;
             var y = sp[1]*tile_size;
-            map.append("<div class='spawn tile' style='top:"+y+"px;left:"+x+"px;'></div>")
+            map.append("<div class='spawn tile' style='top:"+y+"%;left:"+x+"%;'></div>")
         }   
         for(var i = 0; i < map_data.obstacle.length; i++){
             var op = map_data.obstacle[i];
             var x = op[0]*tile_size;
             var y = op[1]*tile_size;
-            map.append("<div class='obstacle tile' style='top:"+y+"px;left:"+x+"px;'></div>")
+            map.append("<div class='obstacle tile' style='top:"+y+"%;left:"+x+"%;'></div>")
         }
     }
 
     function show_move(move){
         var map = $("#map");
-        var tile_size = 25;
+        var tile_size = 5;
         
         var move_data = history[move];
         $("#map .robot").remove();
@@ -130,9 +154,8 @@ var move = 0;
             var y = robot.location[1]*tile_size;
             var player = "player1";
             if(robot.player_id == 1){player = "player2";}
-            map.append("<div class='robot "+player+"' style='top:"+y+"px;left:"+x+"px;'>"+robot.hp+"</div>");
+            map.append("<div class='robot "+player+"' style='top:"+y+"%;left:"+x+"%;'>"+robot.hp+"</div>");
         }
-        console.log(move_data);
     }
 </script>
 {% endblock %}

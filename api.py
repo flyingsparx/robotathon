@@ -1,5 +1,5 @@
 import db_manager
-import uuid, random, hashlib
+import uuid, random, hashlib, time, json
 from rgkit import run
 
 salt = '10988f4a-1d23-4a90-a34d-20ee36294d07'
@@ -109,38 +109,64 @@ def get_robot_source(user, robot_id):
     result['source'] = source
     return result
 
-def battle(robot1_id, robot2_id):
+def run_battle(robot1, robot2):
     result = {}
-    robot1 = db_manager.get_robot_by_id(robot1_id)
-    robot2 = db_manager.get_robot_by_id(robot2_id)
+    result['robot1'] = robot1
+    result['robot2'] = robot2
     if robot1 == None or robot2 == None:
         result['error'] = True
         result['messgae'] = 'There is an invalid robot.'
         return result
     robot1_file = './robots/'+robot1['robot_file']
     robot2_file = './robots/'+robot2['robot_file']
-    
-    runner = run.Runner(player1_file=robot1_file, player2_file=robot2_file)
-    runner.run()
-    game = runner.game 
-    options = runner.options
-    history = game.get_history()
-    scores = game.get_scores() 
+    try: 
+        runner = run.Runner(player1_file=robot1_file, player2_file=robot2_file)
+        runner.run()
+        game = runner.game 
+        options = runner.options
+        history = game.get_history()
+        scores = game.get_scores() 
+        
+        map_file = open(options.map_filepath, 'r')
+        map = map_file.read()
+        map_file.close()    
+
+        for item in history:
+            for item2 in item:
+                item2['location'] = [item2['location'][0],item2['location'][1]]
+
+        result['map'] = map.replace("(","[").replace(")","]")
+        result['error'] = False
+        result['scores'] = scores
+        result['history'] = history
+        return result
+    except Exception as e:
+        result['error'] = True
+        return result
+
+def test(robot_id):
+    robot = db_manager.get_robot_by_id(robot_id)
+    result = run_battle(robot, robot)
+    if result['error'] == False:
+        db_manager.robot_tested(robot_id, True)
+    else:
+        db_manager.robot_tested(robot_id, False)
+    return result
+
+def battle(user, robot1_id, robot2_id):
+    if robot1_id == robot2_id:
+        return {'error': True, 'message': 'Robots cannot battle themselves.'}
+    robot1 = db_manager.get_robot_by_id(robot1_id)
+    if robot1['user_id'] != user['id']:
+        return {'error':True, 'message':'Auth error.'}
+    robot2 = db_manager.get_robot_by_id(robot2_id)
     opposer = db_manager.get_robot_owner(robot2) 
-    
-    map_file = open(options.map_filepath, 'r')
-    map = map_file.read()
-    map_file.close()    
-
-    for item in history:
-        for item2 in item:
-            item2['location'] = [item2['location'][0],item2['location'][1]]
-
-    result['map'] = map.replace("(","[").replace(")","]")
-    result['robot1'] = robot1
-    result['robot2'] = robot2 
-    result['error'] = False
-    result['scores'] = scores
-    result['history'] = history
+    if opposer['id'] == user['id']:
+        return {'error': True, 'message': 'Users cannot battle themselves.'}
+    result = run_battle(robot1, robot2)
     result['opposer'] = opposer
+    if result['error'] == False:
+        timestamp = int(time.time())
+        battle_id = uuid.uuid4()
+        db_manager.store_battle(battle_id, user['id'], opposer['id'], robot1_id, robot2_id, timestamp, result['scores'][0], result['scores'][1], json.dumps(result['history']))
     return result

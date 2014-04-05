@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+{% block body %}
+<section>
+    <h1>{{ arsenal['username'] }}'s arsenal</h1>
+    {% if robot_count == 0 %}
+        <p class="info">{{ arsenal['username'] }} has no robots yet</p>   
+    {% else %}
+        <ul class="robot_list">
+        {% for robot in robots %}
+            <li>
+                <p class="title">{{ robot['robot_name'] }}</p>
+                <p class="username"><a href="/arsenal/{{ arsenal['username'] }}">{{ arsenal['username'] }}</a></p>
+            </li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+</section>
+{% endblock %}
+{% block scripts %}
+<script>
+</script>
+{% endblock %}
+

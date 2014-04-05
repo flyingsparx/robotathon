@@ -2,24 +2,68 @@
 <html lang="en"> 
     <head>
         <title>COMSC Robot</title>
+        <meta name="viewport" content="width=500, user-scalable=0">
         <link href='http://fonts.googleapis.com/css?family=Share+Tech+Mono' rel='stylesheet' type='text/css'>
         <link href="/static/css/main.css" type="text/css" rel="stylesheet" /> 
+        <style>
+            @media (max-width: 800px),handheld{
+                div.half{
+                    display:block;
+                    width:96%;
+                }
+                #map{
+                    width:96%;
+                }
+                input{
+                    display:block;
+                    padding-top:10px;
+                    padding-bottom:10px;
+                    width:350px;
+                }
+                button{
+                    display:block;
+                    width:100%;
+                }
+                button.test{
+                    display:block;
+                    width:100%;
+                }
+                button.source{
+                    display:block;
+                    width:100%;
+                }   
+                button.add{
+                    width:100%;
+                    padding-top:10px;
+                    padding-bottom:10px;
+                }
+                button.battle{
+                    width:100%;
+                    padding-top:10px;
+                    padding-bottom:10px;
+                    margin-left:0px;
+                }
+                ul.robot_list li .battle{
+                    position:relative;
+                    top:0px;right:0px;
+                }
+            }
+        </style>    
     </head>
     <body>
         <div id="loading"></div>
         <header>
             <div id="logo"></div>
             <div id="cs_text">Cardiff School of<br /><span>Computer Science &amp; Informatics</span><br /><br /><span class="robotathon">robotathon</span></div>
-            
-            {% if user != None %}
-                <nav>
-                    <a href="/">dashboard</a>
-                    <a href="/logout">logout</a>
-                </nav>
-            {% endif %}
-
             <div class="clear"></div>
         </header>
+            {% if user != None %}
+                <nav>
+                    <a class="dashboard" href="/"></a>
+                    <a class="battle" href="/find_battle"></a>
+                    <a class="logout"  href="/logout"></a>
+                </nav>
+            {% endif %}
         {% block body %}
         {% endblock %}
     </body>
