@@ -60,6 +60,7 @@
             {% if user != None %}
                 <nav>
                     <a class="dashboard" href="/"></a>
+                    <a class="profile" href="/arsenal/{{user['username']}}"></a>
                     <a class="battle" href="/find_battle"></a>
                     <a class="logout"  href="/logout"></a>
                 </nav>
@@ -78,6 +79,27 @@
         function hide_loading(){
             $("#loading").stop().fadeOut();
         }
+        $(document).ready(function(){
+            $(".time").each(function(){
+                var d = new Date ($(this).html()*1000);
+                var day = d.getDate();
+                var month = d.getMonth()+1;
+                var year = d.getFullYear();
+                var seconds = d.getSeconds();
+                var minutes = d.getMinutes();
+                var hours = d.getHours();
+                if(hours < 10){hours = "0"+hours;}
+                if(minutes < 10){minutes = "0"+minutes;}
+                if(seconds < 10){seconds = "0"+seconds;}
+                $(this).html(day+"/"+month+"/"+year+" "+hours+":"+minutes+":"+seconds);
+            });
+            $(".battle").click(function(){
+                show_loading();
+            });
+            $(".test").click(function(){
+                show_loading();
+            });
+        });
     </script>
     {% block scripts %}
     {% endblock %}

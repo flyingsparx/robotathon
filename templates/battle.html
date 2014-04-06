@@ -4,6 +4,7 @@
     <div class="half">
         {% if test == True %}
             <h1>Test result</h1>
+            <p class="info">A test match fights the robot against itself to make sure there are no errors in your robot's source code.</p>
             {% if result['error'] == False %}
                 <p class="status passed">{{ result['robot1']['robot_name'] }} tested with no problems.</p>
             {% else %}
@@ -12,8 +13,12 @@
             {% endif %}
         {% else %}
             <h1>Battle scorecard</h1>
+            {% if replay == True %}
+                <h2>Battle replay</h2>
+                <p>This battle is a replay of one that took place on <span class="time">{{result['timestamp']}}</span>.</p>
+            {% endif %}
             {% if result['error'] == True %}
-                <p class="error">There was an error with the battle. Ensure both robots have a 'passed' test statis.</p>
+                <p class="error">There was an error with the battle. Ensure both robots have a 'passed' test status.</p><div class="clear"></div></div>
             {% elif result['scores'][0] > result['scores'][1] %}
                 <p class="info">{{ result['robot1']['robot_name'] }} won the battle!</p>
             {% elif result['scores'][1] > result['scores'][0] %}
@@ -27,15 +32,15 @@
         <div class="vs_box">
             <div class="robot robot1">
                 <p class="title">{{ result['robot1']['robot_name'] }}</p>    
-                <p class="owner">{{ user['username'] }}</p>
+                <p class="owner"><a href="/arsenal/{{ result['opposee']['username'] }}">{{ result['opposee']['username'] }}</a></p>
                 <p class="score player1">{{ result['scores'][0] }}</p>
             </div>
             <div class="robot robot1">
                 <p class="title">{{ result['robot2']['robot_name'] }}</p>
                 {% if test == True %}
-                    <p class="owner">{{ user['username'] }} </p>
+                    <p class="owner"><a href="/arsenal/{{ user['username'] }}">{{user['username']}}</a> </p>
                 {% else %}
-                    <p class="owner">{{ result['opposer']['username'] }}</p>
+                    <p class="owner"><a href="/arsenal/{{ result['opposer']['username'] }}">{{ result['opposer']['username'] }}</a></p>
                 {% endif %}
                 <p class="score player2">{{ result['scores'][1] }}</p>
             </div>

@@ -6,6 +6,7 @@
 
     <div class="half">
         <h2>Choose your defender</h2>
+        <p id="robot_error" class="error hidden">You do not have any valid robots to fight with.</p>
         {% if arsenal_count == 0 %}
             <p class="info">You don't have any robots yet :(</p>   
         {% else %}
@@ -64,7 +65,8 @@
             }    
         });
         if(found == false){
-            alert("You do not have any valid robots!");
+            $("#robot_error").removeClass("hidden");
+            $(".battle").addClass("hidden");
         }
         $("#arsenal li").click(function(){
             if($(this).attr("data-status") == 1){

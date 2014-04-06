@@ -6,7 +6,7 @@
     <p>Welcome to the COMSC robot competition.</p>
     <div class="half">
         <h2>Register</h2>
-        <p>Use your Cardiff university email to register.</p>
+        <p>Use your Cardiff University email to register. Your username and password don't need to be the same as your University ones.</p>
         <input id="register_email" type="email" placeholder="email" /><br />
         <input id="register_username" type="text" placeholder="choose a username"  class="username"/><br />
         <input id="register_password1" type="password" placeholder="password" /><br />
@@ -28,9 +28,6 @@
 {% endblock %}
 {% block scripts %}
 <script>
-    $(document).ready(function(){
-        console.log("hello");
-    });
     $("#register").click(function(event){
         $("#register_error").addClass("hidden");
        show_loading(); 

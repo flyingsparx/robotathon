@@ -14,26 +14,47 @@ def initalise():
     con, c = connect()
     c.execute("CREATE TABLE IF NOT EXISTS user (id TEXT, email TEXT, username TEXT, password TEXT)")
     c.execute("CREATE TABLE IF NOT EXISTS robot (robot_id TEXT, user_id TEXT, robot_name TEXT, robot_file TEXT, status NUMBER)")
-    c.execute("CREATE TABLE IF NOT EXISTS battle (battle_id TEXT, user1_id TEXT, user2_id TEXT, robot1_id TEXT, robot2_id TEXT, timestamp NUMBER, score1 NUMBER, score2 NUMBER, history TEXT)")
+    c.execute("CREATE TABLE IF NOT EXISTS battle (battle_id TEXT, user1_id TEXT, user2_id TEXT, robot1_id TEXT, robot2_id TEXT, robot1_name TEXT, robot2_name, timestamp NUMBER, score1 NUMBER, score2 NUMBER, history TEXT)")
     con.commit()
     disconnect(con)
 
 def get_battles_of_user(user_id):
     con, c = connect()
-    rows = c.execute("""SELECT
+    first = c.execute("""SELECT
             user.username as username,
-            robot.robot_name as robot_name,
-            battle.score1 as score1,
-            battle.score2 as score2
+            battle.score1 as home_score,
+            battle.score2 as away_score,
+            battle.robot1_name as home_robot,
+            battle.robot2_name as away_robot,
+            battle.timestamp as timestamp,
+            battle.battle_id as id
             FROM battle
-            LEFT JOIN robot ON battle.robot2_id=robot.robot_id
-            LEFT JOIN user ON battle.user2_id=user.id WHERE battle.user2_id=?""",[user_id]).fetchall();
+            LEFT JOIN user ON battle.user2_id=user.id WHERE battle.user1_id=?""",[user_id]).fetchall();
+    second = c.execute("""SELECT
+            user.username as username,
+            battle.score1 as away_score,
+            battle.score2 as home_score,
+            battle.robot1_name as away_robot,
+            battle.robot2_name as home_robot,
+            battle.timestamp as timestamp,
+            battle.battle_id as id
+            FROM battle
+            LEFT JOIN user ON battle.user1_id=user.id WHERE battle.user2_id=?""",[user_id]).fetchall();
+    combined = first+second
+    combined = sorted(combined, key=lambda k: k['timestamp'])
+    combined.reverse()
     disconnect(con)
-    return rows 
+    return combined
 
-def store_battle(battle_id, user1_id, user2_id, robot1_id, robot2_id, timestamp, score1, score2, history):
+def get_battle(battle_id):
     con, c = connect()
-    c.execute("INSERT INTO battle VALUES(?,?,?,?,?,?,?,?,?)", [battle_id, user1_id, user2_id, robot1_id, robot2_id, timestamp, score1, score2, history])
+    row = c.execute("SELECT * FROM battle WHERE battle_id=?", [battle_id]).fetchone()
+    disconnect(con)
+    return row
+
+def store_battle(battle_id, user1_id, user2_id, robot1_id, robot2_id, robot1_name, robot2_name, timestamp, score1, score2, history):
+    con, c = connect()
+    c.execute("INSERT INTO battle VALUES(?,?,?,?,?,?,?,?,?,?,?)", [battle_id, user1_id, user2_id, robot1_id, robot2_id, robot1_name, robot2_name, timestamp, score1, score2, history])
     con.commit()
     disconnect(con)
 

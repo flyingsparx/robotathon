@@ -251,6 +251,10 @@ nav a.logout{
 nav a.dashboard{
     background-image:url('/static/media/home.png');
 }
+nav a.profile{
+    background-image:url('/static/media/user.png');
+    background-size:25px;
+}
 nav a.battle{
     background-image:url('/static/media/swords3.png');
     background-size:25px;
@@ -395,4 +399,50 @@ ul.robot_list li .title{
 }
 #map .robot.player2{
     background:blue;
+}
+
+ul.battle_list{
+    margin:0px;
+    padding:0px;
+}
+ul.battle_list li{
+    display:block;
+    margin:10px 0px;
+    padding:10px;
+    border-bottom:1px dashed rgb(150,150,150);
+    background-color:rgba(0,0,0,0.05);
+    background-image:url('/static/media/swords.png');
+    background-size:40px;
+    background-repeat:no-repeat;
+    background-position:center center;
+}
+ul.battle_list li .entry{
+    display:inline-block;
+    width:49%;
+    float:left;
+}
+ul.battle_list li .entry .name{
+    font-family: 'Share Tech Mono' ;
+    font-size:20px;
+}
+ul.battle_list li .entry .owner{
+    font-size:15px;
+    color:rgb(100,100,100);
+}
+ul.battle_list li .entry .score{
+    display:block;
+    text-align:center;
+    font-size:30px;
+}
+ul.battle_list li .entry:nth-child(2){
+    text-align:right;
+}
+ul.battle_list li .time{
+    float:left;
+    font-size:11px;
+    color:rgb(100,100,100);
+}
+ul.battle_list li .battle{
+    float:right;
+    margin:0px;
 }

@@ -165,8 +165,42 @@ def battle(user, robot1_id, robot2_id):
         return {'error': True, 'message': 'Users cannot battle themselves.'}
     result = run_battle(robot1, robot2)
     result['opposer'] = opposer
+    result['opposee'] = user
     if result['error'] == False:
         timestamp = int(time.time())
         battle_id = str(uuid.uuid4())
-        db_manager.store_battle(battle_id, user['id'], opposer['id'], robot1_id, robot2_id, timestamp, result['scores'][0], result['scores'][1], json.dumps(result['history']))
+        db_manager.store_battle(battle_id, user['id'], opposer['id'], robot1_id, robot2_id, robot1['robot_name'], robot2['robot_name'], timestamp, result['scores'][0], result['scores'][1], json.dumps(result['history']))
+    return result
+
+def get_battle(battle_id):
+    battle = db_manager.get_battle(battle_id)
+    result = {}
+    
+    map_file = open('./rgkit/maps/default.py', 'r')
+    map = map_file.read()
+    map_file.close()    
+
+    history = json.loads(battle['history'])
+    for item in history:
+        for item2 in item:
+            item2['location'] = [item2['location'][0],item2['location'][1]]
+
+    opposee = db_manager.get_user_by_id(battle['user1_id'])
+    opposer = db_manager.get_user_by_id(battle['user2_id'])
+    
+    result['timestamp'] = battle['timestamp']
+    result['opposee'] = opposee
+    result['opposer'] = opposer
+    result['map'] = map.replace("(","[").replace(")","]")
+    result['error'] = False
+    result['scores'] = []
+    result['scores'].append(battle['score1'])
+    result['scores'].append(battle['score2'])
+    result['history'] = (json.dumps(history)).replace("u'",";")
+    result['robot1'] = {}
+    result['robot1']['robot_name'] = battle['robot1_name'];
+    result['robot2'] = {}
+    result['robot2']['robot_name'] = battle['robot2_name'];
+    print result['scores']
+
     return result

@@ -94,7 +94,7 @@ def view_robot_source():
     if validate_session():
         id = request.args.get('id')
         result = api.get_robot_source(user, id)
-        return render_template('source.html', robot = result['robot'], source = result['source'])
+        return render_template('source.html', robot = result['robot'], source = result['source'], user=user)
 
 @app.route('/arsenal/<username>')
 def view_arsenal(username):
@@ -106,7 +106,7 @@ def view_arsenal(username):
         robots = db_manager.get_robots_of_user(arsenal['id'])
         battles = db_manager.get_battles_of_user(arsenal['id'])
         print battles
-        return render_template('arsenal.html', arsenal=arsenal, robots=robots, robot_count = len(robots))
+        return render_template('arsenal.html', arsenal=arsenal, robots=robots, robot_count = len(robots), battle_count = len(battles), battles=battles, user=user)
 
 @app.route('/find_battle')
 def find_battle():
@@ -115,13 +115,14 @@ def find_battle():
         robots = db_manager.get_all_robots(user['id'])
         return render_template('robot_list.html', arsenal = arsenal, robots = robots, user = user, robot_count = len(robots), arsenal_count = len(arsenal))
     else:
-        return redirect(url_for('home'), user = None)
+        return redirect(url_for('home'))
 
 @app.route('/test')
 def test():
     if validate_session():
         robot_id = request.args.get('id')
         result = api.test(robot_id)
+        result['opposee'] = user
         return render_template('battle.html', result = result, user = user, test = True)
 
 @app.route('/battle')
@@ -130,7 +131,13 @@ def battle():
         robot1_id = request.args.get('id1')
         robot2_id = request.args.get('id2')
         result = api.battle(user, robot1_id, robot2_id)
-        return render_template('battle.html', result = result, user = user, test = False)        
+        return render_template('battle.html', result = result, user = user, test = False, )        
+@app.route("/replay")
+def replay():
+    if validate_session():
+        battle_id = request.args.get('id')
+        result = api.get_battle(battle_id)
+        return render_template('battle.html', result = result, user = user, test = False, replay = True)
 
 # Main code
 if __name__ == '__main__':

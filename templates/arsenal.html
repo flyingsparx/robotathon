@@ -1,19 +1,50 @@
 {% extends "layout.html" %}
 {% block body %}
 <section>
-    <h1>{{ arsenal['username'] }}'s arsenal</h1>
-    {% if robot_count == 0 %}
-        <p class="info">{{ arsenal['username'] }} has no robots yet</p>   
-    {% else %}
-        <ul class="robot_list">
-        {% for robot in robots %}
-            <li>
-                <p class="title">{{ robot['robot_name'] }}</p>
-                <p class="username"><a href="/arsenal/{{ arsenal['username'] }}">{{ arsenal['username'] }}</a></p>
-            </li>
-        {% endfor %}
-        </ul>
-    {% endif %}
+    <h1>{{ arsenal['username'] }}</h1>
+    <div class="half">
+        <h2>Robots</h2>
+        {% if robot_count == 0 %}
+            <p class="info">{{ arsenal['username'] }} has no robots yet</p>   
+        {% else %}
+            <ul class="robot_list">
+            {% for robot in robots %}
+                <li>
+                    <p class="title">{{ robot['robot_name'] }}</p>
+                    <p class="username"><a href="/arsenal/{{ arsenal['username'] }}">{{ arsenal['username'] }}</a></p>
+                </li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+    <div class="half">
+        <h2>Battles</h2>
+        {% if battle_count == 0 %}
+            <p class="info">{{ arsenal['username'] }} has not yet taken part in any battles</p>
+        {% else %}
+            <ul class="battle_list">
+                {% for battle in battles %}
+                    <li>
+                        <div class="entry">
+                            <p class="name">{{ battle['home_robot'] }}</p>
+                            <p class="owner"><a href="/arsenal/{{ arsenal['username'] }}">{{arsenal['username']}}</a></p>
+                            <p class="score">{{ battle['home_score'] }}</p>
+                        </div>
+                        <div class="entry">
+                            <p class="name">{{ battle['away_robot'] }}</p>
+                            <p class="owner"><a href="/arsenal/{{ battle['username'] }}">{{battle['username']}}</a></p>
+                            <p class="score">{{ battle['away_score'] }}</p>
+                        </div>
+                        <div class="clear"></div>
+                        <button class="battle" onclick="window.location='/replay?id={{battle['id']}}';">View this match</button>
+                        <div class="time">{{ battle['timestamp'] }}</div>
+                        <div class="clear"></div>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %} 
+    </div>
+    <div class="clear"></div>
 </section>
 {% endblock %}
 {% block scripts %}
