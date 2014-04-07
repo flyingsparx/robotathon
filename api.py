@@ -1,8 +1,8 @@
 import db_manager
-import uuid, random, hashlib, time, json
+import uuid, random, hashlib, time, json, os
 from rgkit import run
 
-salt = '10988f4a-1d23-4a90-a34d-20ee36294d07'
+salt = os.environ.get('ROBOT_SALT')
 
 def hash_password(password):
     hashed = hashlib.sha1(password + salt).hexdigest()    
