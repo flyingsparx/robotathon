@@ -11,7 +11,8 @@ from flask import Flask, render_template, request, redirect, Response, url_for, 
 import time, os, uuid, json, base64, hmac, urllib, random, db_manager, api
 
 app = Flask(__name__)
-app.secret_key = 'akjdhIW/./D3IA64KJD(,kj92di43nHD(21hwvy12'
+app.secret_key = os.environ.get('ROBOT_SALT')
+
 
 ALLOWED_EXTENSIONS = set(['py'])
 
